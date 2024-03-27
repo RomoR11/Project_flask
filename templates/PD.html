@@ -1,0 +1,48 @@
+{% extends "start.html" %}
+
+
+{% block content %}
+<nav class="navbar navbar-expand-lg" style="background-color: #A9A9A9;">
+  <div class="container-fluid">
+      <a href="/competitions/PL" style="color: #000">{{names[0]}}</a>
+      <a href="/competitions/PD" style="color: blue">{{names[1]}}</a>
+      <a href="/competitions/FL1" style="color: #000">{{names[2]}}</a>
+      <a href="/competitions/BL1" style="color: #000">{{names[3]}}</a>
+      <a href="/competitions/SA" style="color: #000">{{names[4]}}</a>
+      <a href="/competitions/DED" style="color: #000">{{names[5]}}</a>
+      <a href="/competitions/PPL" style="color: #000">{{names[6]}}</a>
+      <a href="/competitions/CLI" style="color: #000">{{names[7]}}</a>
+  </div>
+</nav>
+<table class="table-info table-striped" style="width: 100%">
+    <thead>
+    <tr>
+        <th scope="col">Место</th>
+        <th scope="col">Команда</th>
+        <th scope="col">Игры</th>
+        <th scope="col">В</th>
+        <th scope="col">Н</th>
+        <th scope="col">П</th>
+        <th scope="col">Очки</th>
+    </tr>
+    </thead>
+    <tbody>
+        {% for i in range(length): %}
+            <tr>
+                <td>{{teams[i][0]}}</td>
+                <td>
+                    <div class="d-flex">
+                        <img src="{{teams[i][2]}}" width="30px" height="30px">
+                        <p>{{teams[i][1]}}</p>
+                    </div>
+                </td>
+                <td>{{teams[i][3]}}</td>
+                <td>{{teams[i][4]}}</td>
+                <td>{{teams[i][5]}}</td>
+                <td>{{teams[i][6]}}</td>
+                <td>{{teams[i][7]}}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

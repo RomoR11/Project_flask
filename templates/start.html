@@ -11,13 +11,21 @@
 </head>
 <body>
 <header>
-    <nav class="navbar" style="background-color: #7FFF00;">
-        <h1>Down-x</h1>
-        <a class="navbar-brand" href="#">User</a>
+    <nav class="navbar navbar-expand-lg" style="background-color: #7FFF00;">
+        <div class="container-fluid">
+            <div class="d-flex">
+                <h1>Down-x</h1>
+            </div>
+            <div class="d-flex">
+                <h4><a class="nav-link" style="color: black;" href="/">Главная</a></h4>
+                <h4><a class="nav-link" style="color: black;" href="/competitions">Чемпионаты</a></h4>
+                <h4><a class="nav-link" style="color: black;" href="/bonus">Бонусы</a></h4>
+            </div>
+            <a class="nav-link" style="background-color: #8B008B; color: black;" href="#">User</a>
+        </div>
     </nav>
 </header>
 <main role="main" class="container">
-    <h4>Начало конца..</h4>
     {% block content %}{% endblock %}
 </main>
 </body>
