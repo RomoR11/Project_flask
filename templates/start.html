@@ -21,7 +21,14 @@
                 <h4><a class="nav-link" style="color: black;" href="/competitions">Чемпионаты</a></h4>
                 <h4><a class="nav-link" style="color: black;" href="/bonus">Бонусы</a></h4>
             </div>
-            <a class="nav-link" style="background-color: #8B008B; color: black;" href="#">User</a>
+            {% if current_user.is_authenticated %}
+                <a class="navbar-brand" href="/logout">{{ current_user.name }}</a>
+            {% else %}
+            <p>
+                <a class="btn btn-primary " href="/register">Зарегистрироваться</a>
+                <a class="btn btn-success" href="/login">Войти</a>
+            </p>
+            {% endif %}
         </div>
     </nav>
 </header>
