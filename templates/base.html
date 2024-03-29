@@ -7,24 +7,10 @@
           href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
           crossorigin="anonymous">
-    <title>ПРОЕКТ</title>
+    <title>User</title>
 </head>
 <body>
-<header>
-    <nav class="navbar" style="background-color: #7FFF00;">
-        <h1>Down-x</h1>
-        {% if current_user.is_authenticated %}
-    <a class="navbar-brand" href="/logout">{{ current_user.name }}</a>
-{% else %}
-    <p>
-        <a class="btn btn-primary " href="/register">Зарегистрироваться</a>
-        <a class="btn btn-success" href="/login">Войти</a>
-    </p>
-{% endif %}
-    </nav>
-</header>
 <main role="main" class="container">
-    <h4>Начало конца..</h4>
     {% block content %}{% endblock %}
 </main>
 </body>
