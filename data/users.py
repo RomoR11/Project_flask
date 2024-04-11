@@ -3,6 +3,7 @@ import sqlalchemy
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from .db_session import SqlAlchemyBase
+from sqlalchemy import orm
 
 
 class User(SqlAlchemyBase, UserMixin):
@@ -13,6 +14,7 @@ class User(SqlAlchemyBase, UserMixin):
     name = sqlalchemy.Column(sqlalchemy.String, unique=True, nullable=True)
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     amount_of_money = sqlalchemy.Column(sqlalchemy.Integer, nullable=True)
+    bets = orm.relationship("Bets", back_populates='user')
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)

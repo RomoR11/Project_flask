@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import requests
 from forms.user import RegisterForm, LoginForm
 from data.users import User
+from data.bets import Bets
 from data import db_session
 
 
@@ -19,6 +20,15 @@ codes_competitions = {'Premier League': 'PL', 'Primera Division': 'PD', 'Ligue 1
 login_manager = LoginManager()
 login_manager.init_app(app)
 db_session.global_init("db/users.db")
+db_session.global_init("db/bets.db")
+user = Bets()
+user.match_id = "441721"
+user.bet = ""
+user.email = "email@email.ru"
+db_sess = db_session.create_session()
+db_sess.add(user)
+db_sess.commit()
+
 
 
 @login_manager.user_loader
@@ -94,6 +104,19 @@ def register():
         db_sess.commit()
         return redirect('/login')
     return render_template('register.html', title='Регистрация', form=form)
+
+
+@app.route('/user_bets')
+def user_bets():
+    db_sess = db_session.create_session()
+    bets = []
+    for i in db_sess.query(Bets).filter(Bets.user_id == User.id):
+        response = requests.get(url=f'{url}/matches/{i.match_id}', headers=headers).json()
+        date = f"{response['utcDate'].split('T')[0]} {response['utcDate'].split('T')[1][:5]}"
+        bets.append((response["homeTeam"]["shortName"], response["homeTeam"]["crest"],
+                     response["awayTeam"]["shortName"], response["awayTeam"]["crest"],
+                     date, response["score"]["winner"].lower(), i.bet))
+    return render_template("bets.html", bets=bets)
 
 
 if __name__ == '__main__':
