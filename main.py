@@ -1,7 +1,5 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, make_response
 from flask_login import LoginManager, login_user, login_required, logout_user
-from werkzeug.security import generate_password_hash, check_password_hash
-
 from forms.user import RegisterForm, LoginForm
 from data.users import User
 from data import db_session
@@ -22,6 +20,15 @@ def load_user(user_id):
 
 @app.route('/')
 def start():
+    visits_count = int(request.cookies.get("visits_count", 0))
+    if visits_count:
+        res = make_response('visits_count + 1')
+        res.set_cookie("visits_count", str(visits_count + 1),
+                       max_age=60 * 60 * 24 * 365)
+    else:
+        res = make_response('visits_count')
+        res.set_cookie("visits_count", '1',
+                       max_age=60 * 60 * 24 * 365)
     return render_template('start.html')
 
 
