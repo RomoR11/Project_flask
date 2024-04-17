@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, request, redirect, make_response
 from flask_login import LoginManager, login_user, login_required, logout_user
 import requests
 from forms.user import RegisterForm, LoginForm
@@ -21,14 +21,6 @@ codes_competitions = {'Premier League': 'PL', 'Primera Division': 'PD', 'Ligue 1
 login_manager = LoginManager()
 login_manager.init_app(app)
 db_session.global_init("db/users.db")
-# user = Bets()
-# user.match_id = "444566"
-# user.bet = ""
-# user.email = "email@email.ru"
-# user.user_id = 1
-# db_sess = db_session.create_session()
-# db_sess.add(user)
-# db_sess.commit()
 
 
 @login_manager.user_loader
@@ -39,6 +31,15 @@ def load_user(user_id):
 
 @app.route('/')
 def start():
+    visits_count = int(request.cookies.get("visits_count", 0))
+    if visits_count:
+        res = make_response('visits_count + 1')
+        res.set_cookie("visits_count", str(visits_count + 1),
+                       max_age=60 * 60 * 24 * 365)
+    else:
+        res = make_response('visits_count')
+        res.set_cookie("visits_count", '1',
+                       max_age=60 * 60 * 24 * 365)
     matches = []
     time_from, time_to = dt.datetime.now().date(), dt.datetime.now().date() + dt.timedelta(days=5)
     response = requests.get(url=f'{url}/matches/?dateFrom={time_from}&dateTo={time_to}', headers=headers).json()
@@ -151,6 +152,59 @@ def user_bets():
                      response["awayTeam"]["shortName"], response["awayTeam"]["crest"],
                      date, response["score"]["winner"], i.bet))
     return render_template("bets.html", bets=bets, length=len(bets))
+    visits_count = int(request.cookies.get("visits_count", 0))
+    if visits_count:
+        res = make_response('visits_count + 1')
+        res.set_cookie("visits_count", str(visits_count + 1),
+                       max_age=60 * 60 * 24 * 365)
+    else:
+        res = make_response('visits_count')
+        res.set_cookie("visits_count", '1',
+                       max_age=60 * 60 * 24 * 365)
+    return render_template('start.html')
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect("/")
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(User.name == form.name.data).first()
+        if user and user.check_password(form.password.data):
+            login_user(user, remember=form.remember_me.data)
+            return redirect("/")
+        return render_template('login.html',
+                               message="Неправильный логин или пароль",
+                               form=form)
+    return render_template('login.html', title='Авторизация', form=form)
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        if form.password.data != form.password_again.data:
+            return render_template('register.html', title='Регистрация',
+                                   form=form,
+                                   message="Пароли не совпадают")
+        db_sess = db_session.create_session()
+        if db_sess.query(User).filter(User.name == form.name.data).first():
+            return render_template('register.html', title='Регистрация',
+                                   form=form,
+                                   message="Такой пользователь уже есть")
+        user = User(name=form.name.data, amount_of_money=1000)
+        user.set_password(form.password.data)
+        db_sess.add(user)
+        db_sess.commit()
+        return redirect('/login')
+    return render_template('register.html', title='Регистрация', form=form)
 
 
 if __name__ == '__main__':
