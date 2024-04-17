@@ -1,0 +1,38 @@
+{% extends "start.html" %}
+
+
+{% block content %}
+<h1>Ставка!</h1>
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+        <p>
+        {{ form.user_name.label }}<br>
+        {{ form.user_name(class="form-control") }}<br>
+        {% for error in form.user_name.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.bet.label }}<br>
+        {{ form.bet(class="form-control") }}<br>
+        {% for error in form.bet.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.bet_money.label }}<br>
+        {{ form.bet_money(class="form-control") }}<br>
+        {% for error in form.bet_money.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+    {{message}}
+</form>
+{% endblock %}

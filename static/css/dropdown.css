@@ -34,3 +34,48 @@
 .dropdown-main:hover .dropdown-content {display: block;}
 
 .dropdown-main:hover .dropbtn {background-color: #3e8e41;}
+
+.cont {
+  display: flex;
+}
+
+.datetime {
+    flex: 0 0 100px;
+}
+
+.date {
+    text-align: center;
+    margin: 5px 0px 0px 15px;
+}
+
+.match {
+    flex: 0 0 200px;
+    margin: 5px 0px 0px 50px;
+}
+
+.column {
+    margin-bottom: 10px;
+    border: 2px outset #04AA6D;
+}
+
+.bets {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.bet {
+    width: 100px;
+    margin: 5px 20px 0px 0px;
+}
+
+.bet button {
+    width: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #04AA6D
+}
+
+.bet a {
+    text-align: center;
+    color: black
+}

@@ -6,27 +6,27 @@
   <h1>Ставок нет, надо это исправить</h1>
 {% else %}
   <h1>Ваши ставки</h1>
-  {% for item in news%}
+  {% for i in range(length) %}
       <div class="col-md6 border rounded">
           <div>
               <div class="d-flex">
                   <img src="{{bets[i][1]}}" width="30px" height="30px">
-                  <p>{{teams[i][0]}}</p>
+                  <p>{{bets[i][0]}}</p>
               </div>
               <div class="d-flex">
                   <img src="{{bets[i][3]}}" width="30px" height="30px">
-                  <p>{{teams[i][2]}}</p>
+                  <p>{{bets[i][2]}}</p>
               </div>
           </div>
           <div>
-              {%if teams[i][5] == teams[i][6]%}
+              {%if bets[i][5] == bets[i][6]%}
                     <p>Ваша ставка выиграла! Поздравляем!</p>
               {%else%}
-                {%if teams[i][5] != teams[i][6] and teams[i][5]%}
+                {%if bets[i][5] != bets[i][6] and bets[i][5]%}
                     <p>Ваша ставка проиграла(</p>
                 {%else%}
-                    <p>Время начала: {{teams[i][4]}}</p>
-                    <p>Ваша ставка: на победу {{teams[i][6]}}</p>
+                    <p>Время начала: {{bets[i][4]}}</p>
+                    <p>Ваша ставка: на победу {{bets[i][6]}}</p>
                 {%endif%}
               {%endif%}
           </div>

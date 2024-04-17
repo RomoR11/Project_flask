@@ -1,7 +1,6 @@
 import sqlalchemy as sa
 import sqlalchemy.orm as orm
 from sqlalchemy.orm import Session
-from . import __all_models
 
 SqlAlchemyBase = orm.declarative_base()
 
