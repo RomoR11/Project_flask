@@ -39,7 +39,7 @@ def start():
     else:
         res = make_response('visits_count')
         res.set_cookie("visits_count", '1',
-                       max_age=60 * 60 * 24 * 365)
+                       max_age=60 * 60 * 24 * 5)
     matches = []
     time_from, time_to = dt.datetime.now().date(), dt.datetime.now().date() + dt.timedelta(days=5)
     response = requests.get(url=f'{url}/matches/?dateFrom={time_from}&dateTo={time_to}', headers=headers).json()
@@ -97,50 +97,6 @@ def competition(code):
         return render_template(f'{code}.html', names=names_competitions, teams=teams, length=len(teams))
 
 
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return redirect("/")
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    form = LoginForm()
-    print(form.validate_on_submit())
-    if form.validate_on_submit():
-        db_sess = db_session.create_session()
-        user = db_sess.query(User).filter(User.name == form.name.data).first()
-        if user and user.check_password(form.password.data):
-            login_user(user, remember=form.remember_me.data)
-            return redirect("/")
-        return render_template('login.html',
-                               message="Неправильный логин или пароль",
-                               form=form)
-    return render_template('login.html', title='Авторизация', form=form)
-
-
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    form = RegisterForm()
-    if form.validate_on_submit():
-        if form.password.data != form.password_again.data:
-            return render_template('register.html', title='Регистрация',
-                                   form=form,
-                                   message="Пароли не совпадают")
-        db_sess = db_session.create_session()
-        if db_sess.query(User).filter(User.name == form.name.data).first():
-            return render_template('register.html', title='Регистрация',
-                                   form=form,
-                                   message="Такой пользователь уже есть")
-        user = User(name=form.name.data, amount_of_money=1000)
-        user.set_password(form.password.data)
-        db_sess.add(user)
-        db_sess.commit()
-        return redirect('/login')
-    return render_template('register.html', title='Регистрация', form=form)
-
-
 @app.route('/user_bets')
 def user_bets():
     db_sess = db_session.create_session()
@@ -152,16 +108,6 @@ def user_bets():
                      response["awayTeam"]["shortName"], response["awayTeam"]["crest"],
                      date, response["score"]["winner"], i.bet))
     return render_template("bets.html", bets=bets, length=len(bets))
-    visits_count = int(request.cookies.get("visits_count", 0))
-    if visits_count:
-        res = make_response('visits_count + 1')
-        res.set_cookie("visits_count", str(visits_count + 1),
-                       max_age=60 * 60 * 24 * 365)
-    else:
-        res = make_response('visits_count')
-        res.set_cookie("visits_count", '1',
-                       max_age=60 * 60 * 24 * 365)
-    return render_template('start.html')
 
 
 @app.route('/logout')
