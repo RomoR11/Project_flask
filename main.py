@@ -110,6 +110,11 @@ def user_bets():
     return render_template("bets.html", bets=bets, length=len(bets))
 
 
+@app.route('/profile')
+def profile():
+    return render_template('profile.html', title='Профиль')
+
+
 @app.route('/logout')
 @login_required
 def logout():

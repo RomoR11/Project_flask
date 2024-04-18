@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import PasswordField, StringField, SubmitField, BooleanField
+from wtforms import PasswordField, StringField, SubmitField, BooleanField, FileField
 from wtforms.validators import DataRequired
 
 
@@ -15,3 +15,8 @@ class LoginForm(FlaskForm):
     password = PasswordField('Пароль', validators=[DataRequired()])
     remember_me = BooleanField('Запомнить меня')
     submit = SubmitField('Войти')
+
+
+class ProfileForm(FlaskForm):
+    picture = FileField('Загрузить аву', validators=[DataRequired()])
+    logout = SubmitField('Выйти из аккаунта')
