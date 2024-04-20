@@ -14,6 +14,8 @@ class User(SqlAlchemyBase, UserMixin):
     name = sqlalchemy.Column(sqlalchemy.String, unique=True, nullable=True)
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     amount_of_money = sqlalchemy.Column(sqlalchemy.Integer, nullable=True)
+    created_date = sqlalchemy.Column(sqlalchemy.DateTime,
+                                     default=datetime.datetime.now)
     bets = orm.relationship("Bets", back_populates='user')
 
     def set_password(self, password):

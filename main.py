@@ -19,6 +19,7 @@ codes_competitions = {'Premier League': 'PL', 'Primera Division': 'PD', 'Ligue 1
                       'Bundesliga': 'BL1', 'Serie A': 'SA', 'Eredivisie': 'DED', 'Primeira Liga': 'PPL',
                       'Championship': 'ELC'}
 login_manager = LoginManager()
+USER_NAME = ''
 login_manager.init_app(app)
 db_session.global_init("db/users.db")
 
@@ -112,7 +113,11 @@ def user_bets():
 
 @app.route('/profile')
 def profile():
-    return render_template('profile.html', title='Профиль')
+    global USER_NAME
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.name == USER_NAME).first()
+    return render_template('profile.html', title='Профиль', name=user.name,
+                           created_date=user.created_date, amount_of_money=user.amount_of_money)
 
 
 @app.route('/logout')
@@ -124,11 +129,13 @@ def logout():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    global USER_NAME
     form = LoginForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         user = db_sess.query(User).filter(User.name == form.name.data).first()
         if user and user.check_password(form.password.data):
+            USER_NAME = user.name
             login_user(user, remember=form.remember_me.data)
             return redirect("/")
         return render_template('login.html',

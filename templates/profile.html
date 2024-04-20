@@ -2,4 +2,8 @@
 
 
 {% block content %}
+    <h4>Имя пользователя: {{ name }}</h4>
+    <h4>Дата регистрации: {{ created_date }}</h4>
+    <h4>Баланс: {{ amount_of_money }}</h4>
+    <a href='/logout'><button type=submit>Выйти из профиля</button></a>
 {% endblock %}
