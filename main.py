@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, make_response
 from flask_login import LoginManager, login_user, login_required, logout_user
 import requests
-from forms.user import RegisterForm, LoginForm
+from forms.user import RegisterForm, LoginForm, BonusForm
 from forms.bet import BetForm
 from data.users import User
 from data.bets import Bets
@@ -20,6 +20,7 @@ codes_competitions = {'Premier League': 'PL', 'Primera Division': 'PD', 'Ligue 1
                       'Championship': 'ELC'}
 login_manager = LoginManager()
 USER_NAME = ''
+BONUSES = {}
 login_manager.init_app(app)
 db_session.global_init("db/users.db")
 
@@ -32,15 +33,18 @@ def load_user(user_id):
 
 @app.route('/')
 def start():
+    global BONUSES
     visits_count = int(request.cookies.get("visits_count", 0))
     if visits_count:
         res = make_response('visits_count + 1')
         res.set_cookie("visits_count", str(visits_count + 1),
-                       max_age=60 * 60 * 24 * 365)
+                       max_age=60 * 60 * 24 * 5)
     else:
         res = make_response('visits_count')
         res.set_cookie("visits_count", '1',
                        max_age=60 * 60 * 24 * 5)
+    BONUSES = {'Никита Сергеевич': False, 'Chakra77': False,
+               "DenCor's": False, 'Яна Цист': False, '1488': False, 'Вентилятор': False}
     matches = []
     time_from, time_to = dt.datetime.now().date(), dt.datetime.now().date() + dt.timedelta(days=5)
     response = requests.get(url=f'{url}/matches/?dateFrom={time_from}&dateTo={time_to}', headers=headers).json()
@@ -77,9 +81,31 @@ def bet(match):
     return render_template('create_bet.html', form=form)
 
 
-@app.route('/bonus')
+@app.route('/bonus', methods=['GET', 'POST'])
 def bonus():
-    return render_template('bonus.html')
+    global USER_NAME, BONUSES
+    form = BonusForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(User.name == USER_NAME).first()
+        print(form.bonus_string.data)
+        print(BONUSES)
+        if not BONUSES[form.bonus_string.data] and form.bonus_string.data == 'Никита Сергеевич':
+            BONUSES[form.bonus_string.data] = True
+            salary = user.amount_of_money
+            user.amount_of_money = salary + 100000
+            db_sess.commit()
+        elif not BONUSES[form.bonus_string.data] and form.bonus_string.data == '1488':
+            BONUSES[form.bonus_string.data] = True
+            salary = user.amount_of_money
+            user.amount_of_money = salary + 1488
+            db_sess.commit()
+        if not BONUSES[form.bonus_string.data]:
+            BONUSES[form.bonus_string.data] = True
+            salary = user.amount_of_money
+            user.amount_of_money = salary + 1000
+            db_sess.commit()
+    return render_template('bonus.html', form=form)
 
 
 @app.route('/competitions')
@@ -129,13 +155,15 @@ def logout():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    global USER_NAME
+    global USER_NAME, BONUSES
     form = LoginForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         user = db_sess.query(User).filter(User.name == form.name.data).first()
         if user and user.check_password(form.password.data):
             USER_NAME = user.name
+            BONUSES = {'Никита Сергеевич': False, 'Chakra77': False,
+                       "DenCor's": False, 'Яна Цист': False, '1488': False, 'Вентилятор': False}
             login_user(user, remember=form.remember_me.data)
             return redirect("/")
         return render_template('login.html',

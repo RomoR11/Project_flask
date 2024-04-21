@@ -20,3 +20,8 @@ class LoginForm(FlaskForm):
 class ProfileForm(FlaskForm):
     picture = FileField('Загрузить аву', validators=[DataRequired()])
     logout = SubmitField('Выйти из аккаунта')
+
+
+class BonusForm(FlaskForm):
+    bonus_string = StringField('Введите промокод', validators=[DataRequired()])
+    bonus_submit = SubmitField('Да да я')

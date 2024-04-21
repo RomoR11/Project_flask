@@ -2,5 +2,12 @@
 
 
 {% block content %}
-<h1>Скоро появятся</h1>
+<h1>Промокодобонусы</h1>
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.bonus_string.label }}<br>
+        {{ form.bonus_string(class="form-control") }}<br>
+    </p>
+    <p>{{ form.bonus_submit(type="submit", class="btn btn-primary") }}</p>
 {% endblock %}
