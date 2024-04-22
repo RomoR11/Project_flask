@@ -2,7 +2,7 @@
 
 {% block content %}
 <h1>Регистрация</h1>
-<form action="" method="post">
+<form action="" method="post" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
     <p>
         {{ form.name.label }}<br>
@@ -12,6 +12,10 @@
                 {{ error }}
             </p>
         {% endfor %}
+    </p>
+    <p>
+        {{form.image.label}}<br>
+        {{form.image()}}
     </p>
     <p>
         {{ form.password.label }}<br>

@@ -2,4 +2,17 @@
 
 
 {% block content %}
+    <dev class="d-flex">
+        {% if image %}
+            <img src="{{image}}" width="100px" height="100px">
+        {% else %}
+            <img src="static/avatars/Без аватарки.jpeg" width="100px" height="100px">
+        {% endif %}
+        <dev>
+            <h4>Имя пользователя: {{ name }}</h4>
+            <h4>Дата регистрации: {{ created_date }}</h4>
+            <h4>Баланс: {{ amount_of_money }}</h4>
+            <a href='/logout'><button type=submit>Выйти из профиля</button></a>
+        </dev>
+    </dev>
 {% endblock %}

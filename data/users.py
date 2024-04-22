@@ -11,9 +11,12 @@ class User(SqlAlchemyBase, UserMixin):
 
     id = sqlalchemy.Column(sqlalchemy.Integer,
                            primary_key=True, autoincrement=True)
-    name = sqlalchemy.Column(sqlalchemy.String, unique=True, nullable=True)
-    hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    amount_of_money = sqlalchemy.Column(sqlalchemy.Integer, nullable=True)
+    name = sqlalchemy.Column(sqlalchemy.String, unique=True)
+    hashed_password = sqlalchemy.Column(sqlalchemy.String)
+    amount_of_money = sqlalchemy.Column(sqlalchemy.Integer)
+    created_date = sqlalchemy.Column(sqlalchemy.DateTime,
+                                     default=datetime.datetime.now)
+    image = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     bets = orm.relationship("Bets", back_populates='user')
 
     def set_password(self, password):
