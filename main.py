@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, make_response
 from flask_login import LoginManager, login_user, login_required, logout_user
 import requests
+from werkzeug.utils import secure_filename
 from forms.user import RegisterForm, LoginForm, BonusForm
 from forms.bet import BetForm
 from data.users import User
@@ -142,8 +143,10 @@ def profile():
     global USER_NAME
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.name == USER_NAME).first()
-    return render_template('profile.html', title='Профиль', name=user.name,
-                           created_date=user.created_date, amount_of_money=user.amount_of_money)
+    img = user.image if user.image else False
+    return render_template('profile.html', title='Профиль',
+                           name=user.name, created_date=user.created_date,
+                           amount_of_money=user.amount_of_money, image=img)
 
 
 @app.route('/logout')
@@ -180,12 +183,22 @@ def register():
             return render_template('register.html', title='Регистрация',
                                    form=form,
                                    message="Пароли не совпадают")
+        if not form.image.data.filename.endswith(('.jpeg', '.png', '.jpg')) and form.image.data:
+            return render_template('register.html', title='Регистрация',
+                                   form=form,
+                                   message="Это не ава")
         db_sess = db_session.create_session()
         if db_sess.query(User).filter(User.name == form.name.data).first():
             return render_template('register.html', title='Регистрация',
                                    form=form,
                                    message="Такой пользователь уже есть")
-        user = User(name=form.name.data, amount_of_money=1000)
+        user = User()
+        user.name = form.name.data
+        user.amount_of_money = 1000
+        if form.image.data:
+            filename = secure_filename(form.image.data.filename)
+            form.image.data.save('static/avatars/' + filename)
+            user.image = 'static/avatars/' + filename
         user.set_password(form.password.data)
         db_sess.add(user)
         db_sess.commit()
