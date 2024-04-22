@@ -100,8 +100,6 @@ def bonus():
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         user = db_sess.query(User).filter(User.name == USER_NAME).first()
-        print(form.bonus_string.data)
-        print(BONUSES)
         if not BONUSES[form.bonus_string.data] and form.bonus_string.data == 'Никита Сергеевич':
             BONUSES[form.bonus_string.data] = True
             salary = user.amount_of_money
@@ -207,19 +205,20 @@ def register():
     return render_template('register.html', title='Регистрация', form=form)
 
 
-def win_bet(money, bet):
+def win_bet(money, cr_bet):
+    global USER_NAME
     db_sess = db_session.create_session()
-    user = db_sess.query(User).filter(User.name == USERNAME).first()
-    user.amount_of_money += int(money) * 2 if bet != 'Ничья' else int(money) + int(money) // 2
+    user = db_sess.query(User).filter(User.name == USER_NAME).first()
+    user.amount_of_money += int(money) * 2 if cr_bet != 'Ничья' else int(money) + int(money) // 2
     db_sess.commit()
 
 
 @app.route('/user_bets')
 def user_bets():
-    global USERNAME
+    global USER_NAME
     db_sess = db_session.create_session()
     bets = []
-    user = db_sess.query(User).filter(User.name == USERNAME).first()
+    user = db_sess.query(User).filter(User.name == USER_NAME).first()
     for i in db_sess.query(Bets).filter(Bets.user_id == user.id):
         win = 0
         response = requests.get(url=f'{url}/matches/{i.match_id}', headers=headers).json()
