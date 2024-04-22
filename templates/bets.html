@@ -7,8 +7,9 @@
 {% else %}
   <h1>Ваши ставки</h1>
   {% for i in range(length) %}
-      <div class="col-md6 border rounded">
-          <div>
+      <div class="col-md6 rounded column">
+          <div class="d-flex">
+          <div class="match">
               <div class="d-flex">
                   <img src="{{bets[i][1]}}" width="30px" height="30px">
                   <p>{{bets[i][0]}}</p>
@@ -18,17 +19,28 @@
                   <p>{{bets[i][2]}}</p>
               </div>
           </div>
-          <div>
-              {%if bets[i][5] == bets[i][6]%}
+          <div class="d-flex bets">
+              {%if bets[i][5] == 1%}
+                <div>
                     <p>Ваша ставка выиграла! Поздравляем!</p>
+                </div>
               {%else%}
-                {%if bets[i][5] != bets[i][6] and bets[i][5]%}
+                {%if bets[i][5] == 2%}
                     <p>Ваша ставка проиграла(</p>
                 {%else%}
-                    <p>Время начала: {{bets[i][4]}}</p>
-                    <p>Ваша ставка: на победу {{bets[i][6]}}</p>
+                    <div class="d-flex">
+                        <div class="user_bet">
+                            <p>Время начала:</p>
+                            <p>{{bets[i][4]}}</p>
+                        </div>
+                        <div class="user_bet">
+                            <p>Ваша ставка:</p>
+                            <p>на {{'победу' + ' ' + bets[i][6] if bets[i][6] != 'Ничья' else 'Ничью'}}</p>
+                        </div>
+                    </div>
                 {%endif%}
               {%endif%}
+          </div>
           </div>
       </div>
   {% endfor %}

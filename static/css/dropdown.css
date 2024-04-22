@@ -77,5 +77,11 @@
 
 .bet a {
     text-align: center;
-    color: black
+    color: black;
 }
+
+.user_bet {
+    width: 180px;
+    margin: 5px 20px 0px 0px;
+}
+
