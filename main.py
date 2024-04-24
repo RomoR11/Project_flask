@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, make_response
+from flask import Flask, render_template, redirect
 from flask_login import LoginManager, login_user, login_required, logout_user
 import requests
 from werkzeug.utils import secure_filename
@@ -23,6 +23,7 @@ codes_competitions = {'Premier League': 'PL', 'Primera Division': 'PD', 'Ligue 1
 login_manager = LoginManager()
 USER_NAME = ''
 BONUSES = {}
+LOGIN = False
 login_manager.init_app(app)
 db_session.global_init("db/users.db")
 
@@ -35,18 +36,9 @@ def load_user(user_id):
 
 @app.route('/')
 def start():
-    global BONUSES
-    visits_count = int(request.cookies.get("visits_count", 0))
-    if visits_count:
-        res = make_response('visits_count + 1')
-        res.set_cookie("visits_count", str(visits_count + 1),
-                       max_age=60 * 60 * 24 * 5)
-    else:
-        res = make_response('visits_count')
-        res.set_cookie("visits_count", '1',
-                       max_age=60 * 60 * 24 * 5)
-    BONUSES = {'Никита Сергеевич': False, 'Chakra77': False,
-               "DenCor's": False, 'Яна Цист': False, '1488': False, 'Вентилятор': False}
+    global LOGIN
+    if not LOGIN:
+        logout_user()
     matches = []
     time_from, time_to = dt.datetime.now().date(), dt.datetime.now().date() + dt.timedelta(days=5)
     response = requests.get(url=f'{url}/matches/?dateFrom={time_from}&dateTo={time_to}', headers=headers).json()
@@ -134,10 +126,11 @@ def competition(code):
         for team in response['table']:
             teams.append((team['position'], team['team']['shortName'], team['team']['crest'], team['playedGames'],
                           team['won'], team['draw'], team['lost'], team['points']))
-        return render_template(f'{code}.html', names=names_competitions, teams=teams, length=len(teams))
+        return render_template(f'{code}.html',
+                               names=names_competitions, teams=teams, length=len(teams))
 
 
-@app.route('/profile')
+@app.route('/profile', methods=['GET', 'POST'])
 def profile():
     global USER_NAME
     db_sess = db_session.create_session()
@@ -157,16 +150,17 @@ def logout():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    global USER_NAME, BONUSES
+    global USER_NAME, BONUSES, LOGIN
     form = LoginForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         user = db_sess.query(User).filter(User.name == form.name.data).first()
         if user and user.check_password(form.password.data):
+            LOGIN = True
             USER_NAME = user.name
             BONUSES = {'Никита Сергеевич': False, 'Chakra77': False,
                        "DenCor's": False, 'Яна Цист': False, '1488': False, 'Вентилятор': False}
-            login_user(user, remember=form.remember_me.data)
+            login_user(user)
             return redirect("/")
         return render_template('login.html',
                                message="Неправильный логин или пароль",
@@ -220,7 +214,6 @@ def user_bets():
     bets = []
     user = db_sess.query(User).filter(User.name == USER_NAME).first()
     for i in db_sess.query(Bets).filter(Bets.user_id == user.id):
-        win = 0
         response = requests.get(url=f'{url}/matches/{i.match_id}', headers=headers).json()
         if 'message' in response.keys():
             t.sleep(int(response['message'][-11:-9]))
