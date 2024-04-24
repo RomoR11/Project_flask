@@ -203,7 +203,7 @@ def win_bet(money, cr_bet):
     global USER_NAME
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.name == USER_NAME).first()
-    user.amount_of_money += int(money) * 2 if cr_bet != 'Ничья' else int(money) + int(money) // 2
+    user.amount_of_money += int(money) * 2 if cr_bet != 'Ничья' else int(money) * 3
     db_sess.commit()
 
 

@@ -4,15 +4,15 @@
 {% block content %}
     <div class="d-flex">
         {% if image %}
-            <img src="{{image}}" width="100px" height="100px">
+            <img src="{{image}}" class="avatar">
         {% else %}
-            <img src="static/avatars/Без аватарки.jpeg" width="100px" height="100px">
+            <img src="static/avatars/Без аватарки.jpeg" class="avatar">
         {% endif %}
         <div>
-            <h4>Имя пользователя: {{ current_user.name }}</h4>
-            <h4>Дата регистрации: {{ created_date }}</h4>
-            <h4>Баланс: {{ amount_of_money }}</h4>
-            <a href='/logout'><button type=submit>Выйти из профиля</button></a>
+            <h4 class="profile_info">Имя пользователя: {{ current_user.name }}</h4>
+            <h4 class="profile_info">Дата регистрации: {{ created_date }}</h4>
+            <h4 class="profile_info">Баланс: {{ amount_of_money }}</h4>
+            <a href='/logout' class="profile_info"><button type=submit>Выйти из профиля</button></a>
         </div>
     </div>
 {% endblock %}

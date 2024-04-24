@@ -13,7 +13,6 @@
                 {{ error }}
             </p>
         {% endfor %}
-    </p>
     <p>
         {{ form.bet.label }}<br>
         {{ form.bet(class="form-control") }}<br>
@@ -22,7 +21,6 @@
                 {{ error }}
             </p>
         {% endfor %}
-    </p>
     <p>
         {{ form.bet_money.label }}<br>
         {{ form.bet_money(class="form-control") }}<br>
@@ -31,7 +29,6 @@
                 {{ error }}
             </p>
         {% endfor %}
-    </p>
     <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
     {{message}}
 </form>
