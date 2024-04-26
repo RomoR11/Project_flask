@@ -5,7 +5,7 @@ set -eu
 
 export PYTHONUNBUFFERED=true
 
-v
+
 VIRTUALENV=./venv
 
 if [ ! -d $VIRTUALENV ]; then
