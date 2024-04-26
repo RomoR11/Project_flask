@@ -9,6 +9,7 @@ from data.bets import Bets
 from data import db_session
 import datetime as dt
 import time as t
+import os
 
 
 app = Flask(__name__)
@@ -239,4 +240,5 @@ def user_bets():
 
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=8080)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
